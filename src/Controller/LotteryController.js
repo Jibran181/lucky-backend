@@ -6,7 +6,7 @@ dotenv.config();
 
 const createLottery = async (req, res) => {
   console.log(req.body);
-  const { LotteryNumber, Address, Winner } = req.body;
+  const { LotteryNumber, Address, Winner, start, end } = req.body;
 
   if (
     !Array.isArray(Address) ||
@@ -20,6 +20,8 @@ const createLottery = async (req, res) => {
     LotteryNumber,
     Address,
     Winner,
+    start,
+    end,
   });
 
   return lottery
@@ -33,7 +35,7 @@ const createLottery = async (req, res) => {
 
 const updateLottery = async (req, res) => {
   const { id } = req.params;
-  const { LotteryNumber, Address, Winner } = req.body;
+  const { LotteryNumber, Address, Winner, start, end } = req.body;
 
   if (
     Address &&
@@ -45,7 +47,7 @@ const updateLottery = async (req, res) => {
 
   return Lottery.findByIdAndUpdate(
     id,
-    { LotteryNumber, Address, Winner },
+    { LotteryNumber, Address, Winner, start, end },
     { new: true, runValidators: true }
   )
     .then((lottery) => {

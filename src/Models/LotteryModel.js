@@ -6,11 +6,11 @@ const lottery = new mongoose.Schema({
   },
   Address: {
     type: [String],
-    required: true,
+    required: false,
   },
   Winner: {
     type: String,
-    required: true,
+    required: false,
   },
   start: {
     type: Date,

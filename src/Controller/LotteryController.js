@@ -6,7 +6,7 @@ dotenv.config();
 
 const createLottery = async (req, res) => {
   console.log(req.body);
-  const { LotteryNumber, Address, Winner, start, end } = req.body;
+  const { LotteryNumber, Prize, Address, Winner, start, end } = req.body;
 
   if (
     !Array.isArray(Address) ||
@@ -18,6 +18,7 @@ const createLottery = async (req, res) => {
   const lottery = new Lottery({
     _id: new mongoose.Types.ObjectId(),
     LotteryNumber,
+    Prize,
     Address,
     Winner,
     start,
@@ -35,7 +36,7 @@ const createLottery = async (req, res) => {
 
 const updateLottery = async (req, res) => {
   const { id } = req.params;
-  const { LotteryNumber, Address, Winner, start, end } = req.body;
+  const { LotteryNumber, Prize, Address, Winner, start, end } = req.body;
 
   if (
     Address &&
@@ -47,7 +48,7 @@ const updateLottery = async (req, res) => {
 
   return Lottery.findByIdAndUpdate(
     id,
-    { LotteryNumber, Address, Winner, start, end },
+    { LotteryNumber, Prize, Address, Winner, start, end },
     { new: true, runValidators: true }
   )
     .then((lottery) => {

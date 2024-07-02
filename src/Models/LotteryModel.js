@@ -4,6 +4,10 @@ const lottery = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  Prize: {
+    type: Number,
+    required: true,
+  },
   Address: {
     type: [String],
     required: false,

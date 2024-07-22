@@ -41,6 +41,19 @@ const readAll = (req, res) => {
       res.status(400).json({ error });
     });
 };
+
+const buyerArray = [];
+function getRandomElement(arr) {
+  if (arr.length === 0) {
+    return null;
+  }
+  const randomIndex = Math.floor(Math.random() * arr.length);
+  return arr[randomIndex];
+}
+
+const randomElement = getRandomElement(buyerArray);
+console.log(randomElement);
+
 module.exports = {
   CreateWinner,
   readAll,

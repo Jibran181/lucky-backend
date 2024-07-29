@@ -6,17 +6,22 @@ dotenv.config();
 
 const createLottery = async (req, res) => {
   console.log(req.body);
-  const { LotteryNumber, Prize, Address, Winner, start, end } = req.body;
+  const { LotteryNumber, Prize,Address, Winner, start, end } = req.body;
 
-  if (
-    !Array.isArray(Address) ||
-    Address.some((addr) => typeof addr !== "string")
-  ) {
-    return res.status(400).json({ error: "Invalid Address format" });
+  // if (
+  //   !Array.isArray(Address) ||
+  //   Address.some((addr) => typeof addr !== "string")
+  // ) {
+  //   return res.status(400).json({ error: "Invalid Address format" });
+  // }
+  // Check if a lottery with the same LotteryNumber already exists
+  const existingLottery = await Lottery.findOne({ LotteryNumber });
+    
+  if (existingLottery) {
+    // If a lottery with the same number exists, return a 400 status with an error message
+    return res.status(400).json({ error: "Lottery with this number already exists" });
   }
-
   const lottery = new Lottery({
-    _id: new mongoose.Types.ObjectId(),
     LotteryNumber,
     Prize,
     Address,
@@ -25,6 +30,7 @@ const createLottery = async (req, res) => {
     end,
   });
 
+  console.log(lottery,"lottery")
   return lottery
     .save()
     .then((lottery) => res.status(201).json({ lottery }))

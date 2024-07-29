@@ -3,6 +3,7 @@ const lottery = new mongoose.Schema({
   LotteryNumber: {
     type: Number,
     required: true,
+    unique: true, 
   },
   Prize: {
     type: Number,

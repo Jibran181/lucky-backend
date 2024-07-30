@@ -8,6 +8,10 @@ const buyer = new mongoose.Schema({
     type: [String],
     required: true,
   },
+  // lotteries: [{
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'Lottery'
+  // }]
 });
 
 module.exports = mongoose.model("Buyer", buyer);

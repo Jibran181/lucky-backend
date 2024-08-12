@@ -9,12 +9,13 @@ const lottery = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  Address: {
-    type: [String],
-    required: false,
-  },
   Winner: {
     type: String,
+    required: false,
+    default:null
+  },
+  Claimed: {
+    type: Boolean,
     required: false,
   },
   start: {

@@ -4,10 +4,10 @@ const buyer = new mongoose.Schema({
     type: String,
     required: true,
   },
-  lotteryNumber: {
-    type: [String],
-    required: true,
-  },
+  // lotteryNumber: {
+  //   type: [String],
+  //   required: true,
+  // },
   // lotteries: [{
   //   type: mongoose.Schema.Types.ObjectId,
   //   ref: 'Lottery'

@@ -1,8 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const ticketSchema = new mongoose.Schema({
-  lottery: { type: mongoose.Schema.Types.ObjectId, ref: 'Lottery', required: true },
-   Address: {
+  lottery: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Lottery",
+    required: true,
+  },
+  Address: {
     type: String,
     required: false,
   },
@@ -10,5 +14,5 @@ const ticketSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const Ticket = mongoose.model('Ticket', ticketSchema);
+const Ticket = mongoose.model("Ticket", ticketSchema);
 module.exports = Ticket;

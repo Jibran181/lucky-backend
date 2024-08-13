@@ -30,7 +30,7 @@ const LoginAdmin = async (req, res) => {
 
   try {
     const admin = await Admin.findOne({ UserName: UserName });
-    console.log(admin,"admin")
+    console.log(admin, "admin");
     if (!admin) {
       return res.status(404).json({ message: "Admin not found" });
     } else if (admin.Password == Password) {

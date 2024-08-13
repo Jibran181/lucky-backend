@@ -6,7 +6,8 @@ dotenv.config();
 
 const createLottery = async (req, res) => {
   console.log(req.body);
-  const { LotteryNumber, Prize,Address, Winner, start, end } = req.body;
+  const { LotteryNumber, Prize, TicketPrice, Address, Winner, start, end } =
+    req.body;
 
   // if (
   //   !Array.isArray(Address) ||
@@ -16,21 +17,24 @@ const createLottery = async (req, res) => {
   // }
   // Check if a lottery with the same LotteryNumber already exists
   const existingLottery = await Lottery.findOne({ LotteryNumber });
-    
+
   if (existingLottery) {
     // If a lottery with the same number exists, return a 400 status with an error message
-    return res.status(400).json({ error: "Lottery with this number already exists" });
+    return res
+      .status(400)
+      .json({ error: "Lottery with this number already exists" });
   }
   const lottery = new Lottery({
     LotteryNumber,
     Prize,
+    TicketPrice,
     Address,
     Winner,
     start,
     end,
   });
 
-  console.log(lottery,"lottery")
+  console.log(lottery, "lottery");
   return lottery
     .save()
     .then((lottery) => res.status(201).json({ lottery }))

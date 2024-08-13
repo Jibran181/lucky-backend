@@ -1,13 +1,13 @@
 const dotenv = require("dotenv");
-const crypto = require('crypto');
+const crypto = require("crypto");
 const mongoose = require("mongoose");
 const Buyer = require("../Models/BuyerModel");
-const Ticket =require("../Models/TicketModel");
-const Lottery =require("../Models/LotteryModel")
+const Ticket = require("../Models/TicketModel");
+const Lottery = require("../Models/LotteryModel");
 
 dotenv.config();
 
-// const createBuyer = async (req, res) => {
+// const purchaseTicket = async (req, res) => {
 //   console.log(req.body);
 //   const { Address, lotteryNumber } = req.body;
 
@@ -33,12 +33,11 @@ dotenv.config();
 //     });
 // };
 
-
 async function findExpiredLotteries() {
   const now = new Date();
-  return Lottery.find({ end: { $lt: now }, Winner: null ||'' });
+  return Lottery.find({ end: { $lt: now }, Winner: null || "" });
 }
-// random winner 
+// random winner
 async function selectRandomWinner(lotteryId) {
   const tickets = await Ticket.find({ lottery: lotteryId });
   if (tickets.length === 0) return null;
@@ -51,18 +50,17 @@ async function updateLotteryWithWinner(lotteryId, winnerAddress) {
   await Lottery.findByIdAndUpdate(lotteryId, { Winner: winnerAddress });
 }
 
-//winer selection 
+//winner selection for api endPoint
 
-
- const winnerSelection = async(req,res)=>{
+const winnerSelection = async (req, res) => {
   try {
     const expiredLotteries = await findExpiredLotteries();
-    console.log(expiredLotteries,"expiredLotteries")
+    console.log(expiredLotteries, "expiredLotteries");
     const updatedLotteries = [];
 
     for (const lottery of expiredLotteries) {
       const winnerTicket = await selectRandomWinner(lottery._id);
-      console.log(winnerTicket,"winnerTicket")
+      console.log(winnerTicket, "winnerTicket");
       if (winnerTicket) {
         const updatedLottery = await Lottery.findByIdAndUpdate(
           lottery._id,
@@ -74,19 +72,18 @@ async function updateLotteryWithWinner(lotteryId, winnerAddress) {
     }
 
     res.status(200).json({
-      message: 'Expired lotteries checked and winners updated.',
+      message: "Expired lotteries checked and winners updated.",
       updatedLotteries,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
- }
+};
 
-  async function  winnerSelectionCron() {
-
+async function winnerSelectionCron() {
   try {
     const expiredLotteries = await findExpiredLotteries();
-    console.log(expiredLotteries,"expiredLotteries")
+    console.log(expiredLotteries, "expiredLotteries");
     const updatedLotteries = [];
 
     for (const lottery of expiredLotteries) {
@@ -99,46 +96,47 @@ async function updateLotteryWithWinner(lotteryId, winnerAddress) {
         );
         updatedLotteries.push(updatedLottery);
       }
-      console.log(updatedLotteries,"updated Winner By Cron ")
+      console.log(updatedLotteries, "updated Winner By Cron ");
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
- }
+}
 
- 
-
-// BUYING TICKET Api 
-const createBuyer = async (req, res) => {
+// BUYING TICKET Api
+const purchaseTicket = async (req, res) => {
   try {
     const { Address, lotteryNumber } = req.body;
-    console.log("errr",Address)
+    console.log("errr", Address);
 
     // Validate input
     if (!Address || typeof Address !== "string") {
       return res.status(400).json({ error: "Invalid input format" });
     }
 
-     // Find the lottery and user
-   const lottery = await Lottery.findOne({lotteryNumber});
+    // Find the lottery and user
+    const lottery = await Lottery.findOne({ lotteryNumber });
 
     if (!lottery) {
-      return res.status(404).json({ message: 'Lottery not found' });
+      return res.status(404).json({ message: "Lottery not found" });
     }
-        // Generate a unique ticket number
-        const ticketNumber = crypto.randomBytes(4).toString('hex'); // Example: Generates a random 8-character string
 
-        // Create a new ticket
-        const ticket = new Ticket({
-          lottery: lottery._id,
-          Address: Address,
-          ticketNumber,
-        });
-    
-        // Save the ticket
-     const ticketPurchased=   await ticket.save();
-     res.status(201).json({ ticketPurchased : ticketPurchased });
-    
+    if (lottery.Winner) {
+      return res.status(404).json({ message: "Winner Already  Declared" });
+    }
+    // Generate a unique ticket number
+    const ticketNumber = crypto.randomBytes(4).toString("hex"); // Example: Generates a random 8-character string
+
+    // Create a new ticket
+    const ticket = new Ticket({
+      lottery: lottery._id,
+      Address: Address,
+      ticketNumber,
+    });
+
+    // Save the ticket
+    const ticketPurchased = await ticket.save();
+    res.status(201).json({ ticketPurchased: ticketPurchased });
   } catch (error) {
     console.error("Error creating or updating buyer:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -173,10 +171,9 @@ const readAll = (req, res) => {
     });
 };
 module.exports = {
-  createBuyer,
+  purchaseTicket,
   readByLotteryNumber,
   readAll,
   winnerSelection,
-  winnerSelectionCron
-  
+  winnerSelectionCron,
 };

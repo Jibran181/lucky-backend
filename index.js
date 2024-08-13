@@ -8,7 +8,7 @@ const WinnerRoutes = require("./src/Routes/winner");
 const BuyerRoutes = require("./src/Routes/buyer");
 const LotteryRoutes = require("./src/Routes/lottery");
 const AdminRoutes = require("./src/Routes/admin");
-const { winnerSelectionCron } = require('./src/Controller/BuyerController')
+const { winnerSelectionCron } = require("./src/Controller/BuyerController");
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -23,17 +23,16 @@ app.use("/admin", AdminRoutes);
 app.get("/", function (req, res) {
   res.send("Lucky-backend");
 });
-// // Define the cron job to run every 5 minutes
+// // Define the cron job to run every 5 minute
 // cron.schedule('*/1 * * * *', async () => {
 
 // Define the cron job to run every day at 12 PM
-cron.schedule('0 12 * * *', async () => {
+cron.schedule("0 12 * * *", async () => {
   try {
     // Replace with the actual URL of your API endpoint
-   await winnerSelectionCron()
-   console.log("cron job runnig")
+    await winnerSelectionCron();
+    console.log("cron job runnig");
   } catch (error) {
-    console.error('Error executing cron job:', error.message);
+    console.error("Error executing cron job:", error.message);
   }
 });
-

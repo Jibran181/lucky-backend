@@ -8,7 +8,9 @@ const Lottery = require("../Models/LotteryModel");
 const tokenABI = require("../Contract/ContractAbi");
 
 // Ethereum provider and wallet setup using Infura
-const provider = new ethers.JsonRpcProvider(process.env.INFURA_RPC_URL);
+const provider = new ethers.providers.JsonRpcProvider(
+  process.env.INFURA_RPC_URL
+);
 const walletPrivateKey = process.env.PRIVATE_KEY;
 const wallet = new ethers.Wallet(walletPrivateKey, provider);
 

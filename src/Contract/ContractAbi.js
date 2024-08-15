@@ -254,6 +254,5 @@ const abi = [
     type: "function",
   },
 ];
-module.exports = {
-  abi,
-};
+
+module.exports = { abi };

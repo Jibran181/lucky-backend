@@ -1,4 +1,4 @@
-const { ethers } = require("ethers");
+const ethers = require("ethers");
 const dotenv = require("dotenv");
 const crypto = require("crypto");
 const mongoose = require("mongoose");

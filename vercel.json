@@ -14,8 +14,8 @@
   ],
   "crons": [
     {
-      "path": "/src/Controller/BuyerController.js",
-      "schedule": "* 12 * * *"
+      "path": "/index.js",
+      "schedule": "0 12 * * *"
     }
   ]
 }

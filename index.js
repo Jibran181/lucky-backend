@@ -26,7 +26,7 @@ app.get("/", function (req, res) {
 // // Define the cron job to run every 5 minute
 // cron.schedule("*/1 * * * *", async () => {
 // Define the cron job to run every day at 12 PM
-cron.schedule("0 12 * * *", async () => {
+export async function schedule() {
   try {
     // Replace with the actual URL of your API endpoint
     await winnerSelectionCron();
@@ -34,4 +34,4 @@ cron.schedule("0 12 * * *", async () => {
   } catch (error) {
     console.error("Error executing cron job:", error.message);
   }
-});
+}

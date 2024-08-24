@@ -1,19 +1,16 @@
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const Admin = require("../Models/AdminModel");
-
 dotenv.config();
 
 const CreateAdmin = async (req, res) => {
   console.log(req.body);
   const { UserName, Password } = req.body;
-
   const admin = new Admin({
     _id: new mongoose.Types.ObjectId(),
     UserName: UserName,
     Password: Password,
   });
-
   return admin
     .save()
     .then((admin) => res.status(201).json({ admin }))
@@ -25,9 +22,7 @@ const CreateAdmin = async (req, res) => {
 
 const LoginAdmin = async (req, res) => {
   const { UserName, Password } = req.body;
-
   console.log("req.body:", req.body);
-
   try {
     const admin = await Admin.findOne({ UserName: UserName });
     console.log(admin, "admin");

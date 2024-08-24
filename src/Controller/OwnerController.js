@@ -7,12 +7,10 @@ dotenv.config();
 const CreateOwner = async (req, res) => {
   console.log(req.body);
   const { Address } = req.body;
-
   const owner = new Owner({
     _id: new mongoose.Types.ObjectId(),
     Address: Address,
   });
-
   return owner
     .save()
     .then((owner) => res.status(201).json({ owner }))
@@ -35,20 +33,14 @@ const readAll = (req, res) => {
 const UpdateOwner = (req, res) => {
   const { address } = req.params;
   const { newAddress } = req.body;
-
   console.log("Address:", address);
-
   try {
     const owner = owner.findOne({ address });
-
     if (!owner) {
       return res.status(404).json({ message: "Owner not found" });
     }
-
     if (newAddress) owner.address = newAddress;
-
     owner.save();
-
     res.status(200).json({ message: "Owner updated successfully", owner });
   } catch (error) {
     console.error("Error updating owner:", error);

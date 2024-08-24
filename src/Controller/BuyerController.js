@@ -13,7 +13,6 @@ const provider = new ethers.providers.JsonRpcProvider(
 );
 const walletPrivateKey = process.env.PRIVATE_KEY;
 const wallet = new ethers.Wallet(walletPrivateKey, provider);
-
 const tokenContractAddress = process.env.TOKEN_CONTRACT_ADDRESS;
 const tokenContract = new ethers.Contract(
   tokenContractAddress,
@@ -30,7 +29,6 @@ async function findExpiredLotteries() {
 async function selectRandomWinner(lotteryId) {
   const tickets = await Ticket.find({ lottery: lotteryId });
   if (tickets.length === 0) return null;
-
   const randomIndex = Math.floor(Math.random() * tickets.length);
   return tickets[randomIndex];
 }
@@ -154,27 +152,22 @@ const purchaseTicket = async (req, res) => {
     if (!Address || typeof Address !== "string") {
       return res.status(400).json({ error: "Invalid input format" });
     }
-
     // Find the lottery and user
     const lottery = await Lottery.findOne({ lotteryNumber });
-
     if (!lottery) {
       return res.status(404).json({ message: "Lottery not found" });
     }
-
     if (lottery.Winner) {
       return res.status(404).json({ message: "Winner Already  Declared" });
     }
     // Generate a unique ticket number
     const ticketNumber = crypto.randomBytes(4).toString("hex"); // Example: Generates a random 8-character string
-
     // Create a new ticket
     const ticket = new Ticket({
       lottery: lottery._id,
       Address: Address,
       ticketNumber,
     });
-
     // Save the ticket
     const ticketPurchased = await ticket.save();
     res.status(201).json({ ticketPurchased: ticketPurchased });
@@ -188,17 +181,13 @@ const purchaseTicket = async (req, res) => {
 async function getAddressDetails(req, res) {
   try {
     const { address } = req.params;
-
     if (!address) {
       return res.status(400).json({ error: "Address is required" });
     }
-
     // Find all tickets associated with the address
     const tickets = await Ticket.find({ Address: address });
-
     // Extract the lottery IDs from the tickets
     const lotteryIds = tickets.map((ticket) => ticket.lottery);
-
     // Find all lotteries where the user holds a ticket
     const lotteries = await Lottery.find({ _id: { $in: lotteryIds } }).populate(
       {
@@ -206,13 +195,11 @@ async function getAddressDetails(req, res) {
         match: { Address: address }, // Only populate tickets belonging to the specified address
       }
     );
-
     // Combine the results into a single response object
     const result = {
       address,
       lotteries,
     };
-
     res.status(200).json(result);
   } catch (error) {
     console.error("Error fetching address details:", error.message);
@@ -220,11 +207,8 @@ async function getAddressDetails(req, res) {
   }
 }
 
-module.exports = { getAddressDetails };
-
 const readByLotteryNumber = async (req, res) => {
   const { lotteryNumber } = req.params;
-
   return Buyer.find({ lotteryNumber })
     .then((buyers) => {
       if (!buyers.length) {
@@ -249,10 +233,12 @@ const readAll = (req, res) => {
       res.status(400).json({ error });
     });
 };
+
 module.exports = {
   purchaseTicket,
   readByLotteryNumber,
   readAll,
   winnerSelection,
   winnerSelectionCron,
+  getAddressDetails,
 };

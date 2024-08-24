@@ -18,7 +18,6 @@ const createLottery = async (req, res) => {
   // }
   // Check if a lottery with the same LotteryNumber already exists
   const existingLottery = await Lottery.findOne({ LotteryNumber });
-
   if (existingLottery) {
     // If a lottery with the same number exists, return a 400 status with an error message
     return res
@@ -34,7 +33,6 @@ const createLottery = async (req, res) => {
     start,
     end,
   });
-
   console.log(lottery, "lottery");
   return lottery
     .save()
@@ -48,7 +46,6 @@ const createLottery = async (req, res) => {
 const updateLottery = async (req, res) => {
   const { id } = req.params;
   const { LotteryNumber, Prize, Address, Winner, start, end } = req.body;
-
   if (
     Address &&
     (!Array.isArray(Address) ||
@@ -56,7 +53,6 @@ const updateLottery = async (req, res) => {
   ) {
     return res.status(400).json({ error: "Invalid Address format" });
   }
-
   return Lottery.findByIdAndUpdate(
     id,
     { LotteryNumber, Prize, Address, Winner, start, end },
@@ -78,17 +74,13 @@ const updateLottery = async (req, res) => {
 async function getAddressDetails(req, res) {
   try {
     const { address } = req.params;
-
     if (!address) {
       return res.status(400).json({ error: "Address is required" });
     }
-
     // Find all tickets associated with the address
     const tickets = await Ticket.find({ Address: address });
-
     // Extract the lottery IDs from the tickets
     const lotteryIds = tickets.map((ticket) => ticket.lottery);
-
     // Find all lotteries where the user holds a ticket
     const lotteries = await Lottery.find({ _id: { $in: lotteryIds } }).populate(
       {
@@ -96,13 +88,11 @@ async function getAddressDetails(req, res) {
         match: { Address: address }, // Only populate tickets belonging to the specified address
       }
     );
-
     // Combine the results into a single response object
     const result = {
       address,
       lotteries,
     };
-
     res.status(200).json(result);
   } catch (error) {
     console.error("Error fetching address details:", error.message);
@@ -114,7 +104,6 @@ async function activeLotteries(req, res) {
   try {
     const now = new Date();
     const activeLotteries = await Lottery.find({ end: { $gt: now } });
-
     const lotteriesWithRemainingTime = activeLotteries.map((lottery) => {
       const remainingTimeInSeconds = Math.floor(
         (new Date(lottery.end) - now) / 1000
@@ -124,13 +113,11 @@ async function activeLotteries(req, res) {
         duration: remainingTimeInSeconds,
       };
     });
-
     res.status(200).json(lotteriesWithRemainingTime);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 }
-
 const readAll = (req, res) => {
   Lottery.find()
     .exec()

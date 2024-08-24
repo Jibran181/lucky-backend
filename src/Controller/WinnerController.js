@@ -16,13 +16,11 @@ const CreateWinner = async (req, res) => {
   ) {
     return res.status(400).json({ error: "Invalid LotteryNumbers format" });
   }
-
   const winner = new Winner({
     _id: new mongoose.Types.ObjectId(),
     Address,
     LotteryNumbers,
   });
-
   return winner
     .save()
     .then((winner) => res.status(201).json({ winner }))

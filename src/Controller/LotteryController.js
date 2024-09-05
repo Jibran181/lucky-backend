@@ -97,7 +97,9 @@ async function getAddressDetails(req, res) {
       }
     );
 
-    // Combine the results into a single response object
+    console.log("Aaaaaa");
+
+    // // Combine the results into a single response object
     const result = {
       address,
       lotteries,
@@ -145,4 +147,5 @@ module.exports = {
   updateLottery,
   readAll,
   activeLotteries,
+  getAddressDetails,
 };

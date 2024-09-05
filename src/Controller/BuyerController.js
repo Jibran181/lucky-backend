@@ -146,7 +146,7 @@ async function winnerSelectionCron() {
 const purchaseTicket = async (req, res) => {
   try {
     const { Address, lotteryNumber } = req.body;
-    console.log("errr", Address);
+    console.log("errr", Address, lotteryNumber);
 
     // Validate input
     if (!Address || typeof Address !== "string") {
@@ -159,6 +159,7 @@ const purchaseTicket = async (req, res) => {
     if (!lottery) {
       return res.status(404).json({ message: "Lottery not found" });
     }
+    console.log(lottery, "loooo");
 
     if (lottery.Winner) {
       return res.status(404).json({ message: "Winner Already  Declared" });
@@ -181,44 +182,6 @@ const purchaseTicket = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-// all Lotteries and their tickets an address has bought
-async function getAddressDetails(req, res) {
-  try {
-    const { address } = req.params;
-
-    if (!address) {
-      return res.status(400).json({ error: "Address is required" });
-    }
-
-    // Find all tickets associated with the address
-    const tickets = await Ticket.find({ Address: address });
-
-    // Extract the lottery IDs from the tickets
-    const lotteryIds = tickets.map((ticket) => ticket.lottery);
-
-    // Find all lotteries where the user holds a ticket
-    const lotteries = await Lottery.find({ _id: { $in: lotteryIds } }).populate(
-      {
-        path: "tickets",
-        match: { Address: address }, // Only populate tickets belonging to the specified address
-      }
-    );
-
-    // Combine the results into a single response object
-    const result = {
-      address,
-      lotteries,
-    };
-
-    res.status(200).json(result);
-  } catch (error) {
-    console.error("Error fetching address details:", error.message);
-    res.status(500).json({ error: "Internal server error" });
-  }
-}
-
-module.exports = { getAddressDetails };
 
 const readByLotteryNumber = async (req, res) => {
   const { lotteryNumber } = req.params;

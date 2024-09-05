@@ -30,6 +30,8 @@ const lottery = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  // Reference to the Ticket model
+  tickets: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ticket" }],
 });
 
 module.exports = mongoose.model("Lottery", lottery);

@@ -132,4 +132,5 @@ module.exports = {
   updateLottery,
   readAll,
   activeLotteries,
+  getAddressDetails,
 };

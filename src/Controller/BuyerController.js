@@ -146,7 +146,7 @@ async function winnerSelectionCron() {
 const purchaseTicket = async (req, res) => {
   try {
     const { Address, lotteryNumber } = req.body;
-    console.log("errr", Address);
+    console.log("errr", Address, lotteryNumber);
 
     // Validate input
     if (!Address || typeof Address !== "string") {

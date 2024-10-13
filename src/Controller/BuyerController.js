@@ -23,7 +23,10 @@ dotenv.config();
 
 async function findExpiredLotteries() {
   const now = new Date();
-  return Lottery.find({ end: { $lt: now }, Winner: null || "" });
+  return Lottery.find({
+    end: { $lt: now },
+    $or: [{ Winner: null }, { Winner: "" }],
+  });
 }
 // random winner
 async function selectRandomWinner(lotteryId) {
@@ -101,12 +104,18 @@ async function winnerSelectionCron() {
       if (winnerTicket) {
         try {
           // Convert the prize amount to the appropriate token units (assuming prize amount is already in token decimals)
-          const prizeAmount = ethers.parseUnits(lottery.Prize.toString(), 18);
+          const prizeAmount = ethers.utils.parseUnits(
+            lottery.Prize.toString(),
+            18
+          );
 
           // Transfer tokens to the winner
           const transactionResponse = await tokenContract.transfer(
             winnerTicket.Address,
-            prizeAmount
+            prizeAmount,
+            {
+              gasLimit: 3000000,
+            }
           );
           const receipt = await transactionResponse.wait();
 

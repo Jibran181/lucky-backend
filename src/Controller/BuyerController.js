@@ -45,7 +45,7 @@ async function updateLotteryWithWinner(lotteryId, winnerAddress) {
 const winnerSelection = async (req, res) => {
   try {
     const expiredLotteries = await findExpiredLotteries();
-    console.log(expiredLotteries, "expiredLotteries");
+    // console.log(expiredLotteries, "expiredLotteries")
     const updatedLotteries = [];
 
     for (const lottery of expiredLotteries) {
@@ -96,7 +96,7 @@ const winnerSelection = async (req, res) => {
 async function winnerSelectionCron() {
   try {
     const expiredLotteries = await findExpiredLotteries();
-    console.log(expiredLotteries, "expiredLotteries");
+    // console.log(expiredLotteries, "expiredLotteries");
     const updatedLotteries = [];
 
     for (const lottery of expiredLotteries) {
@@ -104,21 +104,27 @@ async function winnerSelectionCron() {
       if (winnerTicket) {
         try {
           // Convert the prize amount to the appropriate token units (assuming prize amount is already in token decimals)
-          const prizeAmount = ethers.utils.parseUnits(
+
+          const prizeAmount = await ethers.utils.parseUnits(
             lottery.Prize.toString(),
             18
           );
+          console.log(prizeAmount, "prizeAmount");
 
           // Transfer tokens to the winner
           const transactionResponse = await tokenContract.transfer(
-            winnerTicket.Address,
+            "0x1c63e8dead56a3f796e651a48f1df9e912c751f1",
             prizeAmount,
             {
-              gasLimit: 3000000,
+              gasLimit: 21632,
             }
           );
-          const receipt = await transactionResponse.wait();
 
+          console.log(transactionResponse);
+
+          // Wait for the transaction to be mined/confirmed
+          const receipt = await transactionResponse.wait();
+          console.log(receipt, "Transaction receipt");
           if (receipt.status === 1) {
             // Transaction successful
             // Update the lottery with the winner's address and mark as claimed

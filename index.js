@@ -23,8 +23,7 @@ app.use("/admin", AdminRoutes);
 app.get("/", function (req, res) {
   res.send("Lucky-backend");
 });
-// // Define the cron job to run every 5 minute
-cron.schedule("*/1 * * * *", async () => {
+cron.schedule("0 0 * * *", async () => {
   // Define the cron job to run every day at 12 PM
   // export async function schedule() {
   try {

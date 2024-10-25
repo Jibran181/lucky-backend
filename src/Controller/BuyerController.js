@@ -102,50 +102,81 @@ async function winnerSelectionCron() {
     for (const lottery of expiredLotteries) {
       const winnerTicket = await selectRandomWinner(lottery._id);
       if (winnerTicket) {
-        try {
-          // Convert the prize amount to the appropriate token units (assuming prize amount is already in token decimals)
+        // try {
+        //   // Convert the prize amount to the appropriate token units (assuming prize amount is already in token decimals)
 
+        //   const prizeAmount = await ethers.utils.parseUnits(
+        //     lottery.Prize.toString(),
+        //     18
+        //   );
+        //   console.log(prizeAmount, "prizeAmount");
+
+        //   // Transfer tokens to the winner
+        //   const transactionResponse = await tokenContract.transfer(
+        //     winnerTicket.Address.toString(),
+        //     // "0x1c63e8dead56a3f796e651a48f1df9e912c751f1",
+        //     prizeAmount,
+        //     {
+        //       gasLimit: 21632,
+        //     }
+        //   );
+        //   console.log(winnerTicket.Address.toString(), "winner");
+        //   console.log(transactionResponse);
+
+        //   // Wait for the transaction to be mined/confirmed
+        //   const receipt = await transactionResponse.wait();
+        //   console.log(receipt, "Transaction receipt");
+        //   if (receipt.status === 1) {
+        //     // Transaction successful
+        //     // Update the lottery with the winner's address and mark as claimed
+        //     const updatedLottery = await Lottery.findByIdAndUpdate(
+        //       lottery._id,
+        //       { Winner: winnerTicket.Address, Claimed: true },
+        //       { new: true }
+        //     );
+        //     updatedLotteries.push(updatedLottery);
+        //     console.log(
+        //       `Prize transferred successfully to ${winnerTicket.Address} for Lottery ${lottery.LotteryNumber}`
+        //     );
+        //   } else {
+        //     console.error(
+        //       `Transaction failed for Lottery ${lottery.LotteryNumber}`
+        //     );
+        //   }
+        // } catch (error) {
+        //   console.error(
+        //     `Error transferring prize for Lottery ${lottery.LotteryNumber}:`,
+        //     error.message
+        //   );
+        // }
+        try {
           const prizeAmount = await ethers.utils.parseUnits(
             lottery.Prize.toString(),
             18
           );
           console.log(prizeAmount, "prizeAmount");
-
-          // Transfer tokens to the winner
           const transactionResponse = await tokenContract.transfer(
-            "0x1c63e8dead56a3f796e651a48f1df9e912c751f1",
+            winnerTicket.Address.toString(),
             prizeAmount,
-            {
-              gasLimit: 21632,
-            }
+            { gasLimit: 50000 } // Increased gas limit
           );
 
-          console.log(transactionResponse);
-
-          // Wait for the transaction to be mined/confirmed
           const receipt = await transactionResponse.wait();
-          console.log(receipt, "Transaction receipt");
           if (receipt.status === 1) {
-            // Transaction successful
-            // Update the lottery with the winner's address and mark as claimed
+            // Transaction succeeded
             const updatedLottery = await Lottery.findByIdAndUpdate(
               lottery._id,
               { Winner: winnerTicket.Address, Claimed: true },
               { new: true }
             );
             updatedLotteries.push(updatedLottery);
-            console.log(
-              `Prize transferred successfully to ${winnerTicket.Address} for Lottery ${lottery.LotteryNumber}`
-            );
           } else {
-            console.error(
-              `Transaction failed for Lottery ${lottery.LotteryNumber}`
-            );
+            console.error(`Transaction failed with status: ${receipt.status}`);
           }
         } catch (error) {
           console.error(
             `Error transferring prize for Lottery ${lottery.LotteryNumber}:`,
-            error.message
+            error
           );
         }
       }
